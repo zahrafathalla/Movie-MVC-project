@@ -1,0 +1,106 @@
+﻿@model MovieFormViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<h2> @(Model.Id>0?"Edit": "Create") Movie</h2>
+
+<hr />
+
+<section class="row ">
+    <div class="col-md-4 ">
+        <form method="post" asp-action="@(Model.Id>0?"Edit": "Create")" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label class="text-muted" asp-for="Title"></label>
+                <input type="text" class="form-control" asp-for="Title" maxlength="250" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class="text-muted" asp-for="GenreId"></label>
+                <div class="custom-select-wrapper">
+                    <select class="custom-select" asp-for="GenreId" asp-items="@(new SelectList(Model.Genres, "Id", "Name"))">
+                        <option> </option>
+                    </select>
+                    <span class="custom-select-arrow"></span>
+                </div>
+                <span asp-validation-for="GenreId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group w-50">
+                <label class="text-muted" asp-for="year"></label>
+                <input type="text" class="form-control" asp-for="year" value="@(Model.year>0? Model.year :string.Empty)" />
+                <span asp-validation-for="year" class="text-danger"></span>
+            </div>
+            <div class="form-group w-50">
+                <label class="text-muted" asp-for="Rate"></label>
+                <input type="text" class="form-control" asp-for="Rate" value="@(Model.Rate>0? Model.Rate :string.Empty)" />
+                <span asp-validation-for="Rate" class="text-danger"></span>
+            </div>
+            <div class="form-group ">
+                <label class="text-muted" asp-for="StoryLine"></label>
+                <textarea class="form-control" asp-for="StoryLine" maxlength="2500" rows="4">  </textarea>
+                <span asp-validation-for="StoryLine" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label class ="text-muted" asp-for="Poster"></label>
+                <div class="custom-file border">
+                    <input type="file" class="custom-file-input" asp-for="Poster" accept=".jpg , .png">
+                    <label class="custom-file-label" > </label>
+                </div>
+                <span asp-validation-for="Poster" class="text-danger"></span>
+            </div>
+            <br />
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check"></i> Save
+                </button>
+             
+                <a asp-action="Index" class="btn btn-outline-secondary"> <i class="bi bi-x"></i> Cancel</a>
+            </div>
+
+        </form>
+    </div>
+    <div class="col-md-4">
+        <div id="poster-container" class="@(Model.Id>0? string.Empty :"d-none")">
+            <img src="@(Model.Id>0?$"data:image/*;base64,{Convert.ToBase64String(Model.Poster)}" :string.Empty)" alt="poster" class="img-thumbnail" />
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            $('#Poster').on('change', function () {
+
+                var posterContainer = $('#poster-container');
+                var image = window.URL.createObjectURL(this.files[0]);
+
+                posterContainer.removeClass('d-none');
+                posterContainer.find('img').attr('src', image);
+
+            });
+
+            $('#year').datepicker({
+                format: 'yyyy',
+                viewMode: 'years',
+                minViewMode: 'years',
+                autoclose: true,
+                startDate: '1950',
+                endDate: new Date().getFullYear().toString()
+            });
+        });
+    </script>
+}
+
+
+
